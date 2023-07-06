@@ -15,8 +15,8 @@ if __name__ == "__main__":
     log_file = Path('out/parser_log.log')
     get_logger(log_file)
 
-    # out_file = Path('out/posts.json')
-    out_file = Path('out/test_4gui.json')
+    out_file = Path('out/posts.json')
+    # out_file = Path('out/test_4gui.json')
     # out_file = Path('out/posts.json')
 
     if not out_file.is_file():
