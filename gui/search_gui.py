@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 import sys
+import webbrowser
 sys.path.append("..")
 
 from ReadWriteData import ReadDataFromFile
@@ -91,7 +92,7 @@ def create_comment_widget(comment, parent_frame, word_to_bold):
 
 def open_link(url):
     # Implement your code to open the URL here
-    print("Opening URL:", url)
+    webbrowser.open(url)
 
 def ShowData():
     # Create the main window
@@ -130,14 +131,9 @@ def ShowData():
         if exclude_users_entry.get():
             exclude_users = exclude_users_entry.get().split(',')
 
-        print("String Search:", search_text)
-        print("Include Users:", include_users)
-        print("Exclude Users:", exclude_users)
-
         filters = Filters(string_to_search=search_text, include_users=include_users, exclude_users=exclude_users)
 
         posts = ReadDataFromFile(filters=filters)
-        print(len(posts))
         # Perform search or any other action with the search inputs
 
         # Show the post data
@@ -194,9 +190,3 @@ def ShowData():
 
     # Start the main event loop
     root.mainloop()
-
-
-
-
-    if __name__ == "__main__":
-        ShowData()

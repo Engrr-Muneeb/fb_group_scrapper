@@ -49,8 +49,9 @@ def ScrapeData(get_again=False):
         date = user_inputs["selected_date"]
     else:
         group_id, number_of_pages, date = ReadInputFile()
+        cookies_file = str(DEFAULT_COOKIES_FILE_PATH)
 
-    log_window_handle = redirect_stdout(log_file, logger)
+    log_window_handle, log_window = redirect_stdout(log_file, logger)
     logger.debug('Scraping Data.....')
     logger.debug(f'Group ID: {group_id}')
     logger.debug(f'Pages to Scrape: {number_of_pages}')
@@ -61,16 +62,22 @@ def ScrapeData(get_again=False):
                       pages_to_read=number_of_pages,
                       latest_date=date, get_again=get_again)
 
-    end_scraping(logger, log_window_handle)
+    end_scraping(logger, log_window_handle, log_window)
 
 
 def ParseAndWriteData(group_id, cookies_file, pages_to_read, latest_date, get_again):
+    max_limit = 3
+    if get_again:
+        max_limit = 1
 
     WriteInputFile(group_id, pages_to_read, latest_date)
-    posts = get_posts_data(group_id, cookies_file, out_file, pages_to_read, latest_date)
+    posts = get_posts_data(group_id, cookies_file,
+                           pages_to_read, latest_date,
+                           max_past_limit=max_limit)
 
     if get_again:
         old_posts = GetDataFromOutFile()
+        posts = list(posts)
         posts.extend(old_posts)
 
     with open(out_file, 'w') as fid:
@@ -138,7 +145,7 @@ def WriteInputFile(group_id, pages_to_read, latest_date):
 
 def ReadInputFile():
     in_ = open(inp_file_name).readlines()
-    last_time = datetime.fromtimestamp(in_[0].strip())
-    group_id = in_[1]
-    pages_to_read = in_[2]
+    last_time = datetime.fromtimestamp(float(in_[0].strip()))
+    group_id = in_[1].split(':')[-1].strip()
+    pages_to_read = int(in_[2].split(':')[-1].strip())
     return group_id, pages_to_read, last_time

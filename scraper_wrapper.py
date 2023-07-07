@@ -13,7 +13,7 @@ def get_logger():
         os.mkdir(log_file.parent)
     utils.enable_logging(log_file)
 
-def get_posts_data(group_id, cookies_file, out_file, pages_to_read, latest_date):
+def get_posts_data(group_id, cookies_file, pages_to_read, latest_date, max_past_limit):
     start_url = None
     def handle_pagination_url(url):
         logger.debug(url)
@@ -26,10 +26,10 @@ def get_posts_data(group_id, cookies_file, out_file, pages_to_read, latest_date)
                               request_url_callback=handle_pagination_url,
                               cookies=cookies_file,
                               options={"comments": True}, pages=pages_to_read,
-                              latest_date=latest_date)
+                              latest_date=latest_date, max_past_limit=max_past_limit)
             break
         except exceptions.TemporarilyBanned:
             logger.debug("Temporarily banned, sleeping for 5m")
             time.sleep(300)
-    return list(posts)
+    return posts
 

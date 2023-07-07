@@ -18,14 +18,18 @@ if __name__ == "__main__":
 
     if not out_file.is_file():
         ScrapeData()
+    else:
+        selection = AskToGetLatestData()
+        if selection == 'Scrape Latest Posts':
+            ScrapeData(get_again=True)
+        if selection == 'Scrape Again':
+            ScrapeData()
+        if selection == 'Continue':
+            pass
+        else:
+            exit(0)
 
-    selection = AskToGetLatestData()
-    if selection == 'Scrape Latest Posts':
-        ScrapeData(get_again=True)
-    if selection == 'Scrape Again':
-        ScrapeData()
-    if selection == 'Continue':
-        ShowData()
+    ShowData()
 
     # group_id = '753754635185088'
     # group_id = '165508793857687'

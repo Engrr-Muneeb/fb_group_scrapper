@@ -25,6 +25,7 @@ def redirect_stdout(log_file, logger):
     global log_text
     log_window = tk.Toplevel()
     log_window.title("Log")
+    log_window.geometry('750x600')
     window.geometry('800x600')
     log_text = tk.Text(log_window, height=20, width=50)
     # Create the Scrollbar widget
@@ -45,10 +46,10 @@ def redirect_stdout(log_file, logger):
     log_window_handle = logging.StreamHandler(stream=log_writer)
 
     logger.addHandler(log_window_handle)
-    return log_window_handle
+    return log_window_handle, window
 
-def end_scraping(logger, log_window_handle):
+def end_scraping(logger, log_window_handle, window):
     logger.removeHandler(log_window_handle)  # Remove the log window handler
 
     messagebox.showinfo("Complete", "Data Scraping Completed!!")
-    tk._default_root.destroy()
+    window.destroy()
