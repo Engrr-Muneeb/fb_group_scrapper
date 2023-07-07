@@ -56,7 +56,7 @@ def CreateInitGUI():
     window.protocol("WM_DELETE_WINDOW", on_closing)
 
     # Cookies File
-    cookies_file_label = tk.Label(window, text="  Cookies File:")
+    cookies_file_label = tk.Label(window, text="   Cookies File:")
     cookies_file_label.grid(row=0, column=0, sticky="w")
 
     cookies_file_asterisk = tk.Label(window, text="*", fg="red")
@@ -72,7 +72,7 @@ def CreateInitGUI():
     cookies_file_button.grid(row=0, column=2)
 
     # Group ID
-    group_id_label = tk.Label(window, text="  Group ID:")
+    group_id_label = tk.Label(window, text="   Group ID:")
     group_id_label.grid(row=1, column=0, sticky="w")
 
     group_id_asterisk = tk.Label(window, text="*", fg="red")

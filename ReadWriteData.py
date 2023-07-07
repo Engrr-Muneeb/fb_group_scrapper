@@ -3,14 +3,17 @@ import shutil
 import os
 from datetime import datetime
 import time
-import sys
 import json
+from pathlib import Path
 
-from scraper_wrapper import get_posts_data, logger
+from scraper_wrapper import get_posts_data, logger, log_file
 from gui.initial_gui import CreateInitGUI, DEFAULT_COOKIES_FILE_PATH
 from gui.gui_loging import redirect_stdout, end_scraping
 from data_types import FBPost, Comment, Reply
 
+
+out_file = Path(__file__).resolve().parent / 'out/posts.json'
+inp_file_name = out_file.parent / "inp_params"
 
 def get_comment_data(comment):
     name = comment['commenter_name']
@@ -36,12 +39,16 @@ def AskUserInputs():
     user_inputs["selected_date"] = date
     return user_inputs
 
-def ScrapeData(log_file, out_file):
-    user_inputs = AskUserInputs()
-    cookies_file = str(user_inputs["cookies_file"])
-    group_id = user_inputs["group_id"]
-    number_of_pages = user_inputs["number_of_pages"]
-    date = user_inputs["selected_date"]
+def ScrapeData(get_again=False):
+
+    if not get_again:
+        user_inputs = AskUserInputs()
+        cookies_file = str(user_inputs["cookies_file"])
+        group_id = user_inputs["group_id"]
+        number_of_pages = user_inputs["number_of_pages"]
+        date = user_inputs["selected_date"]
+    else:
+        group_id, number_of_pages, date = ReadInputFile()
 
     log_window_handle = redirect_stdout(log_file, logger)
     logger.debug('Scraping Data.....')
@@ -51,25 +58,35 @@ def ScrapeData(log_file, out_file):
     time.sleep(1)
 
     ParseAndWriteData(group_id=group_id, cookies_file=cookies_file,
-                      out_file=out_file, pages_to_read=number_of_pages,
-                      latest_date=date)
+                      pages_to_read=number_of_pages,
+                      latest_date=date, get_again=get_again)
 
     end_scraping(logger, log_window_handle)
 
 
-def ParseAndWriteData(group_id, cookies_file, out_file, pages_to_read, latest_date):
+def ParseAndWriteData(group_id, cookies_file, pages_to_read, latest_date, get_again):
 
+    WriteInputFile(group_id, pages_to_read, latest_date)
     posts = get_posts_data(group_id, cookies_file, out_file, pages_to_read, latest_date)
+
+    if get_again:
+        old_posts = GetDataFromOutFile()
+        posts.extend(old_posts)
 
     with open(out_file, 'w') as fid:
         json.dump(list(posts), fid, indent=4, sort_keys=True, default=str)
 
-def ReadDataFromFile(out_file, filters):
-    post_list =list()
 
+def GetDataFromOutFile():
     with open(out_file, "r") as in_:  
         # Reading from file
         posts = json.loads(in_.read())
+    return posts
+
+def ReadDataFromFile(filters):
+    post_list =list()
+
+    posts = GetDataFromOutFile()
 
     for post in posts:
         is_text_matched = list()
@@ -81,9 +98,6 @@ def ReadDataFromFile(out_file, filters):
         post_url = post['post_url']
         user_name = post['username']
         all_comments = list(post['comments_full'])
-
-        out_ = open('out/out_pposts.txt', 'w', encoding="UTF-8")
-        out_.write(f"POST:\n{str(post)}\n\n")
 
         if not filters.IncludeUser(user_name) or filters.ExcludeUser(user_name):
             continue
@@ -108,8 +122,23 @@ def ReadDataFromFile(out_file, filters):
                     comment_obj.AddReply(reply_obj)
 
         if any(is_text_matched):
-            out_.write("\nMATCHED\n")
             post_obj.AddComments(post_comments)
             post_list.append(post_obj)
         # break
     return post_list
+
+
+def WriteInputFile(group_id, pages_to_read, latest_date):
+    with open(inp_file_name, 'w') as out_:
+        out_.write(f"{str(time.time())}\n")
+        out_.write(f"group_id:{group_id}\n")
+        out_.write(f"pages_to_read:{pages_to_read}\n")
+        out_.write(f"latest_date:{latest_date}\n")
+
+
+def ReadInputFile():
+    in_ = open(inp_file_name).readlines()
+    last_time = datetime.fromtimestamp(in_[0].strip())
+    group_id = in_[1]
+    pages_to_read = in_[2]
+    return group_id, pages_to_read, last_time

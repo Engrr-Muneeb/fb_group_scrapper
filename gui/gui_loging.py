@@ -25,6 +25,7 @@ def redirect_stdout(log_file, logger):
     global log_text
     log_window = tk.Toplevel()
     log_window.title("Log")
+    window.geometry('800x600')
     log_text = tk.Text(log_window, height=20, width=50)
     # Create the Scrollbar widget
     scrollbar = tk.Scrollbar(log_window)

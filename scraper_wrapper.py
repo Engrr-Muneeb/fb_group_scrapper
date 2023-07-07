@@ -1,10 +1,14 @@
 import os
 import time
+from pathlib import Path
 
 from scrapper import utils
 from scrapper.entry import *
 
-def get_logger(log_file):
+
+log_file = Path(__file__).resolve().parent / 'out/parser_log.log'
+
+def get_logger():
     if not log_file.parent.is_dir():
         os.mkdir(log_file.parent)
     utils.enable_logging(log_file)
@@ -27,5 +31,5 @@ def get_posts_data(group_id, cookies_file, out_file, pages_to_read, latest_date)
         except exceptions.TemporarilyBanned:
             logger.debug("Temporarily banned, sleeping for 5m")
             time.sleep(300)
-    return posts
+    return list(posts)
 
