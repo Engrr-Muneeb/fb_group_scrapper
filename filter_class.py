@@ -2,8 +2,8 @@ class Filters:
 
     def __init__(self, string_to_search, include_users, exclude_users) -> None:
         self.string_to_search = string_to_search
-        self.include_users = include_users
-        self.exclude_users = exclude_users
+        self.include_users = [k.strip() for k in include_users]
+        self.exclude_users = [k.strip() for k in exclude_users]
 
 
     def IncludeUser(self, user_name):
