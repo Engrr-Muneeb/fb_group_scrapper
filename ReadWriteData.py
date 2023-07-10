@@ -98,7 +98,6 @@ def ReadDataFromFile(filters):
     for post in posts:
         is_text_matched = list()
         post_comments = []
-        # out.write(f"{str(post)}\n")
         text = post['text']
         is_text_matched.append(filters.MatchText(text))
         post_time = post['time']
@@ -112,8 +111,6 @@ def ReadDataFromFile(filters):
         post_obj = FBPost(user=user_name, url=post_url, text=text, time= post_time)
 
         for comment in all_comments:
-            # print('Comment')
-            # exit()
             name, comment_text, comment_url, comment_time = get_comment_data(comment)
             is_text_matched.append(filters.MatchText(comment_text))
             comment_obj = Comment(user=name, url=comment_url, time=comment_time, text=comment_text)
@@ -131,7 +128,7 @@ def ReadDataFromFile(filters):
         if any(is_text_matched):
             post_obj.AddComments(post_comments)
             post_list.append(post_obj)
-        # break
+
     return post_list
 
 

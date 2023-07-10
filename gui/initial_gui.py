@@ -79,7 +79,6 @@ def CreateInitGUI():
     group_id_asterisk.grid(row=1, sticky="w")
 
     group_id_entry = tk.Entry(window)
-    group_id_entry.insert(0, '1608483306030594')
     group_id_entry.grid(row=1, column=1, pady=5)
 
     # Number of Pages
@@ -91,17 +90,6 @@ def CreateInitGUI():
     number_of_pages_entry.grid(row=2, column=1, pady=5)
 
     # Date
-
-    # date_label = tk.Label(window, text="Date:")
-    # date_label.grid(row=3, column=0, sticky="w")
-
-    # date_picker = tk.Entry(window)
-    # date_picker.grid(row=3, column=1, pady=5)
-
-    # date_picker_button = tk.Button(window, text="Select Date", command=show_date_picker)
-    # date_picker_button.grid(row=3, column=2)
-
-
     date_label = tk.Label(window, text="Date: (DD-MM-YYYY)")
     date_label.grid(row=3, column=0, sticky="w")
 
